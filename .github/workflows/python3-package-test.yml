@@ -5,13 +5,14 @@ name: Python3 package test
 
 on:
   push:
-    branches: [ master, "3-cpython-0.0", "2-cpython-0.0" ]
+    branches: [ master, shit ]
   pull_request:
-    branches: [ master, "3-cpython-0.0", "2-cpython-0.0" ]
+    branches: [ master ]
 
 jobs:
-  tests:
-    runs-on: ubuntu-latest
+  download_python:
+    name: "Download Python"
+    runs-on: ubuntu-lastest
     strategy:
       fail-fast: false
       matrix:
@@ -28,18 +29,28 @@ jobs:
           "3.9.0", "3.9.1", "3.9.2", "3.9.3", "3.9.4", "3.9.5",
         ]
     steps:
-      - uses: actions/checkout@v2
       - name: Set up Python
         id: python-setup
         continue-on-error: true
         run: |
-          mkdir ./..bin
-          cd ./..bin
-          git clone https://github.com/python/cpython.git
-          cd cpython
-          git checkout v${{ matrix.version }}
-          ./configure
-          sudo make install
+            mkdir ./..bin
+            cd ./..bin
+            git clone https://github.com/python/cpython.git
+            cd cpython
+            git checkout v${{ matrix.version }}
+      - uses: actions/cache@v2
+        id: download_python
+        name: Downloading Python
+        with:
+          path: ./..bin
+          key: python-v${{ matrix.version }}
+
+
+  ubuntu:
+    needs: download_python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Set up package
         #        run: |
         #          import os
