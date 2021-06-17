@@ -12,7 +12,7 @@ on:
 jobs:
   download_python:
     name: "Download Python"
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
